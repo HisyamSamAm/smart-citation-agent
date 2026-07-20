@@ -479,29 +479,57 @@ Tipe Output: text
 
 ---
 
-## Ringkasan Skenario Pengujian
+## Hasil Pengujian
 
-| No | Skenario | Kategori | Status |
-|:--:|----------|----------|:------:|
-| 1.1 | Dokumentasi Swagger | Server | - |
-| 1.2 | Health check | Server | - |
-| 2.1 | Referensi DOI tunggal | Fungsional | - |
-| 2.2 | Referensi via judul | Fungsional | - |
-| 2.3 | Referensi via URL | Fungsional | - |
-| 2.4 | Multi-line referensi | Fungsional | - |
-| 2.5 | JSON array referensi | Fungsional | - |
-| 2.6 | Metadata manual | Fungsional | - |
-| 2.7 | Repository GitHub | Fungsional | - |
-| 2.8 | Referensi tidak ditemukan | Fungsional | - |
-| 2.9 | Payload kosong | Fungsional | - |
-| 2.10 | Gaya APA | Fungsional | - |
-| 3.1 | Response sukses | API Contract | - |
-| 3.2 | Response error | API Contract | - |
-| 3.3 | Pemetaan tipe data | API Contract | - |
-| 4.1 | Header CORS valid | CORS | - |
-| 4.2 | Origin tidak terdaftar | CORS | - |
-| 5.1 | Waktu respon | Beban | - |
-| 5.2 | Request berurutan | Beban | - |
-| 6.1 | Persiapan deployment | Deployment | - |
-| 6.2 | Deploy ke cloud | Deployment | - |
-| 6.3 | Verifikasi pasca deploy | Deployment | - |
+Pengujian dilakukan terhadap deployment production di `https://smart-citation-agent-production.up.railway.app` pada tanggal 20 Juli 2026.
+
+### Servis
+
+| No | Skenario | Target | Hasil |
+|:--:|----------|--------|:-----:|
+| 1.1 | Dokumentasi Swagger | `/docs` dan `/openapi.json` tersedia | LULUS |
+| 1.2 | Health check | Status `healthy`, field lengkap | LULUS |
+
+### Fungsional
+
+| No | Skenario | Input | Hasil |
+|:--:|----------|-------|:-----:|
+| 2.1 | DOI tunggal | `10.1038/nature14236` (IEEE) | LULUS |
+| 2.2 | Judul publikasi | `Attention Is All You Need` (APA) | LULUS |
+| 2.3 | URL via payload | `url` field dengan GitHub repo | LULUS |
+| 2.4 | Multi-line | 2 DOIs dipisah baris baru | LULUS |
+| 2.5 | JSON array | Array berisi 2 DOI | LULUS |
+| 2.6 | Metadata manual | Objek JSON `{title, author, year, publisher}` | LULUS |
+| 2.7 | Repository GitHub | URL GitHub terekstrak nama repo | LULUS |
+| 2.8 | DOI tidak valid | `10.9999/invalid-doi` (warning dihasilkan) | LULUS |
+| 2.9 | Payload kosong | `raw_text: ""` (HTTP 400) | LULUS |
+| 2.10 | Gaya APA | Format APA, tidak ada elemen IEEE | LULUS |
+
+### API Contract
+
+| No | Skenario | Verifikasi | Hasil |
+|:--:|----------|------------|:-----:|
+| 3.1 | Response sukses | Status `success`, `task_id` cocok, `file_url` null | LULUS |
+| 3.2 | Response error | Status `error`, data null, HTTP 400 | LULUS |
+| 3.3 | Pemetaan tipe data | Input text, output text, endpoint POST | LULUS |
+
+### CORS
+
+| No | Skenario | Hasil |
+|:--:|----------|:-----:|
+| 4.1 | Header CORS valid (`Allow-Origin`) | LULUS |
+
+### Performa
+
+| No | Skenario | Detail | Hasil |
+|:--:|----------|--------|:-----:|
+| 5.1 | Waktu respon | 1.38 detik (batas 30 detik) | LULUS |
+| 5.2 | Request berurutan (5x) | Rata-rata 0.92 detik/request, total 4.59 detik | LULUS |
+
+### Deployment
+
+| No | Skenario | Hasil |
+|:--:|----------|:-----:|
+| 6.1 | Persiapan deployment | LULUS |
+| 6.2 | Deploy ke Railway | LULUS |
+| 6.3 | Verifikasi pasca deploy | LULUS |
