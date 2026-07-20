@@ -20,8 +20,8 @@ Dokumen ini berisi tahapan pengujian untuk memverifikasi bahwa SCRA Agent Server
 
  sebelum memulai pengujian, pastikan hal-hal berikut telah terpenuhi.
 
-1. Server SCRA Agent berjalan pada `http://127.0.0.1:8000`.
-2. FastAPI dan uvicorn telah terinstal.
+1. Server SCRA Agent berjalan pada `http://127.0.0.1:8000` untuk pengujian lokal, atau URL production `https://smart-citation-agent-production.up.railway.app` untuk pengujian jarak jauh.
+2. FastAPI dan uvicorn telah terinstal (lihat `requirements-api.txt` untuk daftar dependensi).
 3. Koneksi internet aktif untuk mengakses CrossRef API.
 4. Terminal atau PowerShell siap digunakan untuk mengirim request.
 
@@ -465,14 +465,14 @@ Berikut adalah platform yang dapat digunakan beserta langkah-langkahnya.
 
 Setelah berhasil di-deploy, lakukan verifikasi berikut.
 
-- Health check melalui URL publik: `GET https://<domain>/health`.
-- Test process dengan referensi melalui: `POST https://<domain>/process`.
+- Health check melalui URL publik: `GET https://smart-citation-agent-production.up.railway.app/health`.
+- Test process dengan referensi melalui: `POST https://smart-citation-agent-production.up.railway.app/process`.
 - Pastikan CORS berfungsi dengan origin orkestrator.
 - Laporkan URL publik ke tim API Gateway untuk didaftarkan pada file `.env` orkestrator.
 
 ```
 Nama Agent : citation_reference
-Endpoint   : POST https://<domain>/process
+Endpoint   : POST https://smart-citation-agent-production.up.railway.app/process
 Tipe Input : text
 Tipe Output: text
 ```

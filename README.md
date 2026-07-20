@@ -1,6 +1,6 @@
 # Smart Citation & Reference Agent (SCRA)
 
-SCRA is a command-line tool that automates the generation of citations and bibliographies. It accepts various forms of reference input, validates metadata, detects the source type, and produces formatted citations in IEEE or APA style. The tool uses the CrossRef API to retrieve metadata for DOIs and titles, and applies rule-based logic for source detection and citation formatting.
+SCRA (Smart Citation & Reference Agent) is a tool for automating the generation of citations and bibliographies. It is available in two forms: a command-line interface (CLI) for direct usage, and an HTTP API server for integration into multi-agent systems. The tool accepts various forms of reference input, validates metadata, detects the source type, and produces formatted citations in IEEE or APA style. It uses the CrossRef API to retrieve metadata for DOIs and titles, and applies rule-based logic for source detection and citation formatting.
 
 ---
 
@@ -8,7 +8,8 @@ SCRA is a command-line tool that automates the generation of citations and bibli
 
 - [Persyaratan Sistem](#persyaratan-sistem)
 - [Instalasi](#instalasi)
-- [Cara Penggunaan](#cara-penggunaan)
+- [Cara Penggunaan (CLI)](#cara-penggunaan-cli)
+- [API Server](#api-server)
 - [Jenis Input](#jenis-input)
 - [Alur Kerja Agent](#alur-kerja-agent)
 - [Style Sitasi](#style-sitasi)
@@ -19,7 +20,11 @@ SCRA is a command-line tool that automates the generation of citations and bibli
 
 ## Persyaratan Sistem
 
-SCRA berjalan pada Python 3.8 atau yang lebih baru. Tidak ada pustaka eksternal yang diperlukan karena seluruh fungsionalitas dibangun di atas modul standar Python (`urllib`, `json`, `re`, `argparse`, `datetime`).
+SCRA berjalan pada Python 3.8 atau yang lebih baru. Terdapat dua mode penggunaan dengan persyaratan yang berbeda.
+
+**Mode CLI (Command Line):** Tidak memerlukan pustaka eksternal. Seluruh fungsionalitas CLI dibangun di atas modul standar Python (`urllib`, `json`, `re`, `argparse`, `datetime`).
+
+**Mode API Server:** Memerlukan FastAPI dan uvicorn. Instalasi dapat dilakukan melalui `pip install -r requirements-api.txt`.
 
 Sistem operasi yang didukung mencakup Windows, macOS, dan Linux.
 
@@ -40,9 +45,9 @@ Tidak ada perintah `pip install` yang diperlukan.
 
 ---
 
-## Cara Penggunaan
+## Cara Penggunaan (CLI)
 
-SCRA dijalankan melalui terminal dengan memberikan satu atau lebih referensi sebagai argumen. Berikut adalah bentuk umum perintah:
+SCRA menyediakan antarmuka CLI yang dijalankan melalui terminal. Berikut adalah bentuk umum perintah:
 
 ```
 python main.py [input] [--style ieee|apa] [--output text|json] [--file FILE] [--interactive]
@@ -87,6 +92,67 @@ python main.py --interactive --style apa
 ```
 
 Setelah masuk ke mode interaktif, SCRA akan menampilkan prompt `>>>`. Setiap referensi yang dimasukkan akan langsung diproses dan hasilnya ditampilkan sebelum prompt berikutnya muncul.
+
+---
+
+## API Server
+
+SCRA juga tersedia dalam bentuk HTTP API server yang dapat diintegrasikan ke dalam sistem Multi-Agent. Server ini dibangun menggunakan FastAPI dan telah di-deploy di alamat berikut.
+
+```
+Production : https://smart-citation-agent-production.up.railway.app
+Dokumentasi : https://smart-citation-agent-production.up.railway.app/docs
+```
+
+### Endpoint
+
+| Method | Endpoint | Deskripsi |
+|--------|----------|-----------|
+| `GET` | `/health` | Memeriksa status kesehatan server |
+| `POST` | `/process` | Memproses referensi dan menghasilkan sitasi |
+
+### Format Request
+
+Server menerima JSON dengan struktur sebagai berikut.
+
+```json
+{
+    "task_id": "req-12345-abc",
+    "agent_type": "citation_reference",
+    "payload": {
+        "url": "",
+        "keyword": "ieee",
+        "raw_text": "10.1038/nature14236"
+    }
+}
+```
+
+### Format Response
+
+Response sukses dikembalikan dalam format berikut.
+
+```json
+{
+    "status": "success",
+    "task_id": "req-12345-abc",
+    "data": {
+        "result": "[1] V. Mnih et al., ...",
+        "file_url": null
+    },
+    "message": "Pemrosesan berhasil"
+}
+```
+
+Dokumentasi API yang lebih lengkap tersedia di `API_DOKUMENTASI.md`.
+
+### Menjalankan Server Secara Lokal
+
+```
+pip install -r requirements-api.txt
+python agent_server.py
+```
+
+Server akan berjalan pada `http://127.0.0.1:8000`.
 
 ---
 

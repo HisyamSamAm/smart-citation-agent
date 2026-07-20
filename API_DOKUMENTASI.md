@@ -23,17 +23,32 @@ Dokumen ini diperuntukkan bagi tim pengelola API Gateway (orkestrator) yang perl
 
 ---
 
+## Dependensi Server
+
+Untuk menjalankan server ini secara mandiri, diperlukan pustaka berikut.
+
+| Pustaka | Versi Minimal | Fungsi |
+|---------|---------------|--------|
+| `fastapi` | 0.104.0 | Framework HTTP untuk API |
+| `uvicorn` | 0.24.0 | ASGI server untuk menjalankan FastAPI |
+
+Instalasi dapat dilakukan melalui perintah berikut.
+
+```
+pip install -r requirements-api.txt
+```
+
+---
+
 ## Base URL
 
 Berikut adalah base URL untuk setiap environment.
 
 | Environment | URL |
 |-------------|-----|
-| **Production** | `https://<domain-production>` |
-| **Staging** | `https://<domain-staging>` |
+| **Production** | `https://smart-citation-agent-production.up.railway.app` |
+| **Staging** | `https://smart-citation-agent-production.up.railway.app` |
 | **Local Development** | `http://127.0.0.1:8000` |
-
-Base URL production akan diberikan setelah proses deployment selesai.
 
 ---
 
@@ -51,7 +66,7 @@ Endpoint untuk memeriksa status kesehatan agent.
 
 **Contoh Request:**
 ```
-GET https://<domain>/health
+GET https://smart-citation-agent-production.up.railway.app/health
 ```
 
 **Response:**
@@ -77,7 +92,7 @@ Endpoint utama untuk memproses referensi dan menghasilkan sitasi.
 
 **Contoh Request:**
 ```
-POST https://<domain>/process
+POST https://smart-citation-agent-production.up.railway.app/process
 Content-Type: application/json
 ```
 
@@ -416,7 +431,7 @@ Apabila `citation_reference` offline, orkestrator dapat melewatkannya karena out
 Tim API Gateway perlu mendaftarkan agent ini pada konfigurasi orkestrator melalui file `.env` atau mekanisme registrasi yang tersedia. Data yang diperlukan adalah sebagai berikut.
 
 ```
-CITATION_REFERENCE_URL=https://<domain>/process
+CITATION_REFERENCE_URL=https://smart-citation-agent-production.up.railway.app/process
 CITATION_REFERENCE_INPUT=text
 CITATION_REFERENCE_OUTPUT=text
 ```
@@ -498,7 +513,7 @@ func callCitationAgent(taskID, rawText, style string) (*CitationResponse, error)
 import requests
 
 def call_citation_agent(task_id: str, raw_text: str, style: str = "ieee") -> dict:
-    url = "https://<domain>/process"
+    url = "https://smart-citation-agent-production.up.railway.app/process"
     payload = {
         "task_id": task_id,
         "agent_type": "citation_reference",
@@ -517,7 +532,7 @@ def call_citation_agent(task_id: str, raw_text: str, style: str = "ieee") -> dic
 const axios = require('axios');
 
 async function callCitationAgent(taskId, rawText, style = 'ieee') {
-    const url = 'https://<domain>/process';
+    const url = 'https://smart-citation-agent-production.up.railway.app/process';
     const payload = {
         task_id: taskId,
         agent_type: 'citation_reference',
